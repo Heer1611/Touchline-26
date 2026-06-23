@@ -436,14 +436,13 @@ def _team_for_existing_player(match: Match, incoming_team: Team, player: Player)
         *,
         lineup_only: bool = False,
     ) -> int:
-    """Persist actual 2026 box-score rows so player profiles include this year.
-
-    This function is intentionally idempotent: syncing the same ESPN match twice
-    updates the existing player/match row rather than inserting another one.
-    """
-    match = _match_entity(session, provider_id)
-    if not match:
-        return 0
+        """    Persist actual 2026 box-score rows so player profiles include this year.
+        This function is intentionally idempotent: syncing the same ESPN match twice
+        updates the existing player/match row rather than inserting another one.
+        """
+        match = _match_entity(session, provider_id)
+        if not match:
+            return 0
 
     teams_by_provider = {
         match.home_team.provider_id: match.home_team,
