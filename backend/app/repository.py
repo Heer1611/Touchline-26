@@ -149,7 +149,6 @@ def _complete_appearance_rows(appearances: list[InternationalAppearance]) -> lis
         if appearance.rating_kind not in {"event_pulse", "lineup_only"}
     ]
 
-
 def _projected_player_out(player: Player, appearances: list[InternationalAppearance]) -> MatchPlayerStatOut:
     projection = project_player_from_international_history(_complete_appearance_rows(appearances))
     usable = _has_usable_projection(projection)
@@ -430,15 +429,13 @@ def _team_for_existing_player(match: Match, incoming_team: Team, player: Player)
     if player.national_team_id == match.away_team_id:
         return match.away_team
     return incoming_team
-
-
-def upsert_espn_match_appearances(
-    session: Session,
-    provider_id: str,
-    player_lines: list[EspnPlayerLine],
-    *,
-    lineup_only: bool = False,
-) -> int:
+    def upsert_espn_match_appearances(
+        session: Session,
+        provider_id: str,
+        player_lines: list[EspnPlayerLine],
+        *,
+        lineup_only: bool = False,
+    ) -> int:
     """Persist actual 2026 box-score rows so player profiles include this year.
 
     This function is intentionally idempotent: syncing the same ESPN match twice
