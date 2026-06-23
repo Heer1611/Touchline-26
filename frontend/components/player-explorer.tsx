@@ -22,12 +22,11 @@ function formatDate(value: string) {
 
 function CurrentLine({ player }: { player: PlayerSummary }) {
   const line = player.tournament_2026;
-  const hasVerifiedEvent = line.event_linked_matches > 0 || line.goals > 0 || line.assists > 0 || line.yellow_cards > 0 || line.red_cards > 0;
-  const hasFullLine = line.full_stat_lines > 0;
+  const hasConfirmedAppearance = line.games_played > 0;
   return (
-    <div className={`player-year-line ${hasVerifiedEvent || hasFullLine ? "has-event" : ""}`}>
+    <div className={`player-year-line ${hasConfirmedAppearance ? "has-event" : ""}`}>
       <span>2026 file</span>
-      {hasVerifiedEvent || hasFullLine ? (
+      {hasConfirmedAppearance ? (
         <strong>{line.games_played} game{line.games_played === 1 ? "" : "s"} played · {line.goals} verified G · {line.assists} A</strong>
       ) : <strong>Named squad profile</strong>}
     </div>
@@ -124,8 +123,7 @@ export function PlayerExplorer({ onHistoryImported }: { onHistoryImported: () =>
         <div>
           <p className="eyebrow">PLAYER FILES</p>
           <h2>Every squad, not only the scorers.</h2>
-          <p>Start with <strong>Load 2026 squads</strong>. It brings named team rosters into the index. The full 2026 sync checks every completed World Cup game, then updates named events and any player box score ESPN has published.</p>
-        </div>
+          <div className="player-source-note"><strong>How to read this:</strong> a named 2026 goal, assist, or card — or an ESPN-confirmed starting XI spot — counts toward <strong>Games played</strong>. Minutes, shots, xG, passing, and ratings remain pending until ESPN publishes a full player box score.</div>        </div>
         <div className="player-action-row">
           <button className="primary-button" type="button" onClick={() => void syncSquads()} disabled={syncingSquads}>{syncingSquads ? "Loading squads…" : "Load 2026 squads"}</button>
           <button className="secondary-button" type="button" onClick={() => void sync2026()} disabled={syncing2026}>{syncing2026 ? "Syncing tournament…" : "Sync all 2026 data"}</button>
@@ -165,8 +163,12 @@ export function PlayerExplorer({ onHistoryImported }: { onHistoryImported: () =>
         <section className="projection-panel"><div><span>Projected minutes</span><strong>{selected.projection.expected_minutes ? selected.projection.expected_minutes.toFixed(0) : "—"}</strong></div><div><span>Score chance</span><strong>{selected.projection.appearances_used ? `${selected.projection.chance_to_score.toFixed(1)}%` : "—"}</strong></div><div><span>Expected Pulse</span><strong>{selected.projection.expected_rating?.toFixed(1) ?? "—"}</strong></div></section>
         <section className="appearance-history"><div className="profile-subheading"><h3>Game record</h3><span>{selected.recent_appearances.length ? "Most recent 12 · event-only rows include verified event data" : "No verified game record yet"}</span></div>
           {selected.recent_appearances.length ? <div className="appearance-table-wrap"><table><thead><tr><th>Date</th><th>Opponent</th><th>Min</th><th>G</th><th>A</th><th>YC</th><th>RC</th><th>Sh</th><th>xG</th><th>Rating</th><th>Source</th></tr></thead><tbody>{selected.recent_appearances.map((appearance, index) => {
-            const partial = appearance.data_source.includes("partial") || appearance.data_source.includes("event");
-            return <tr key={`${appearance.match_date}-${appearance.opponent_name}-${index}`} className={partial ? "partial-record-row" : ""}><td>{formatDate(appearance.match_date)}</td><td>{appearance.opponent_name}</td><td>{partial ? "Pending" : (appearance.minutes || "—")}</td><td>{appearance.goals}</td><td>{appearance.assists}</td><td>{appearance.yellow_cards}</td><td>{appearance.red_cards}</td><td>{partial ? "Pending" : (appearance.shots || "—")}</td><td>{partial ? "Pending" : (appearance.xg?.toFixed(2) ?? "—")}</td><td>{partial ? "Not published" : (appearance.rating?.toFixed(1) ?? "—")}</td><td><span className="appearance-source">{partial ? "2026 event log" : (appearance.data_source.includes("ESPN") ? "2026 box score" : "StatsBomb")}</span></td></tr>;
+      const lineupOnly = appearance.data_source.includes("starting lineup");
+      const partial =
+        lineupOnly ||
+        appearance.data_source.includes("partial") ||
+        appearance.data_source.includes("event");
+            return <tr key={`${appearance.match_date}-${appearance.opponent_name}-${index}`} className={partial ? "partial-record-row" : ""}><td>{formatDate(appearance.match_date)}</td><td>{appearance.opponent_name}</td><td>{partial ? "Pending" : (appearance.minutes || "—")}</td><td>{appearance.goals}</td><td>{appearance.assists}</td><td>{appearance.yellow_cards}</td><td>{appearance.red_cards}</td><td>{partial ? "Pending" : (appearance.shots || "—")}</td><td>{partial ? "Pending" : (appearance.xg?.toFixed(2) ?? "—")}</td><td>{partial ? "Not published" : (appearance.rating?.toFixed(1) ?? "—")}</td><td><span className="appearance-source">{lineupOnly   ? "2026 lineup"   : partial     ? "2026 event log"     : appearance.data_source.includes("ESPN")       ? "2026 box score"       : "StatsBomb"}</span></td></tr>;
           })}</tbody></table></div> : <div className="profile-empty">This is a synced 2026 squad member. Current player events and full box-score data will appear here once the free feed publishes them.</div>}
         </section>
       </article></div>}
