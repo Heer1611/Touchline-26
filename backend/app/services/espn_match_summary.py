@@ -79,7 +79,11 @@ _FIELD_ALIASES: dict[str, set[str]] = {
 _ALIAS_TO_FIELD = {alias.replace(" ", ""): field for field, aliases in _FIELD_ALIASES.items() for alias in aliases}
 
 
-def extract_player_lines(payload: dict[str, Any]) -> list[EspnPlayerLine]:
+def extract_player_lines(
+    payload: dict[str, Any],
+    *,
+    include_confirmed_starters: bool = False,
+) -> list[EspnPlayerLine]:
     """Return per-player rows from ESPN's boxscore structure, if supplied.
 
     A no-data result means the summary did not include a player table. It does not
@@ -137,7 +141,12 @@ def extract_player_lines(payload: dict[str, Any]) -> list[EspnPlayerLine]:
 
     # A summary can include leader cards but not a full team table. Require at least
     # one box-score metric before showing a player as an actual 2026 line.
-    return [line for line in by_key.values() if line.fields_seen > 0]
+    return [
+        line
+        for line in by_key.values()
+        if line.fields_seen > 0
+        or (include_confirmed_starters and line.started)
+    ]
 
 
 def pulse_rating_from_available_stats(line: EspnPlayerLine) -> float | None:
