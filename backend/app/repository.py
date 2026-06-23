@@ -143,7 +143,11 @@ def _complete_appearance_rows(appearances: list[InternationalAppearance]) -> lis
     the player completed a match. They must never be counted as appearances or be
     used to inflate a forecast.
     """
-    return [appearance for appearance in appearances if appearance.rating_kind != "event_pulse"]
+    return [
+        appearance
+        for appearance in appearances
+        if appearance.rating_kind not in {"event_pulse", "lineup_only"}
+    ]
 
 
 def _projected_player_out(player: Player, appearances: list[InternationalAppearance]) -> MatchPlayerStatOut:
@@ -432,6 +436,8 @@ def upsert_espn_match_appearances(
     session: Session,
     provider_id: str,
     player_lines: list[EspnPlayerLine],
+    *,
+    lineup_only: bool = False,
 ) -> int:
     """Persist actual 2026 box-score rows so player profiles include this year.
 
@@ -478,8 +484,29 @@ def upsert_espn_match_appearances(
         appearance.match_date = match.kickoff_at
         appearance.opponent_name = opponent.name
         appearance.competition = "2026 FIFA World Cup"
-        appearance.started = line.started
-        appearance.minutes = line.minutes
+        before = (
+            appearance.started,
+            appearance.data_source,
+            appearance.rating_kind,
+        )
+        appearance.started = appearance.started or line.started
+        if lineup_only:
+            # Keep richer event or full-box-score data when it already exists.
+            if appearance.rating_kind not in {"live_pulse", "event_pulse"}:
+                appearance.rating = None
+                appearance.data_source = (
+                    "ESPN confirmed starting lineup (partial — box score pending)"
+                )
+                appearance.rating_kind = "lineup_only"
+            after = (
+                appearance.started,
+                appearance.data_source,
+                appearance.rating_kind,
+            )
+            if after != before:
+                imported += 1
+                continue
+            appearance.minutes = line.minutes
         # Keep any independently verified event fields if the public box-score table
         # is incomplete or lags behind the match report.
         appearance.goals = max(appearance.goals or 0, line.goals)
