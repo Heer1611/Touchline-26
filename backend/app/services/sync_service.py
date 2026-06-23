@@ -369,6 +369,7 @@ class LiveSyncService:
     ) -> tuple[TournamentSyncReport, bool]:
         event_rows_written = 0
         full_rows_written = 0
+        lineup_rows_written = 0
         summary_count = 0
         summaries_with_boxscore = 0
         write_failures = 0
@@ -385,10 +386,34 @@ class LiveSyncService:
                     )
                     if summary is not None:
                         summary_count += 1
-                        full_lines = extract_player_lines(summary)
+                        all_lines = extract_player_lines(
+                            summary,
+                            include_confirmed_starters=True,
+                        )
+                        full_lines = [
+                            line
+                            for line in all_lines
+                            if line.fields_seen > 0
+                        ]
+                        starter_only_lines = [
+                            line
+                            for line in all_lines
+                            if line.started and line.fields_seen == 0
+                        ]
                         if full_lines:
                             summaries_with_boxscore += 1
-                            full_rows_written += upsert_espn_match_appearances(session, provider_id, full_lines)
+                            full_rows_written += upsert_espn_match_appearances(
+                                session,
+                                provider_id,
+                                full_lines,
+                            )
+                            if starter_only_lines:
+                                lineup_rows_written += upsert_espn_match_appearances(
+                                    session,
+                                    provider_id,
+                                    starter_only_lines,
+                                    lineup_only=True,
+                                )
                 except Exception:
                     # One malformed ESPN player payload should not prevent every
                     # other completed tournament game from being saved.
@@ -406,7 +431,11 @@ class LiveSyncService:
             summary_failures=summary_failures,
             write_failures=write_failures,
         )
-        return report, bool(event_rows_written or full_rows_written)
+        return report, bool(
+            event_rows_written
+            or full_rows_written
+            or lineup_rows_written
+        )
 
     @staticmethod
     def _delete_old_provider_fixtures() -> int:
