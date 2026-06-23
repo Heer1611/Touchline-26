@@ -79,8 +79,8 @@ When information is unavailable, the site shows `Pending` or `—` instead of es
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/touchline26.git
-cd touchline26
+git clone https://github.com/Heer1611/Touchline-26.git
+cd Touchline-26
 ```
 
 Create your local environment file:
