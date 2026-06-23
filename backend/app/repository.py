@@ -429,20 +429,20 @@ def _team_for_existing_player(match: Match, incoming_team: Team, player: Player)
     if player.national_team_id == match.away_team_id:
         return match.away_team
     return incoming_team
-    def upsert_espn_match_appearances(
-        session: Session,
-        provider_id: str,
-        player_lines: list[EspnPlayerLine],
-        *,
-        lineup_only: bool = False,
-    ) -> int:
-        """    Persist actual 2026 box-score rows so player profiles include this year.
-        This function is intentionally idempotent: syncing the same ESPN match twice
-        updates the existing player/match row rather than inserting another one.
-        """
-        match = _match_entity(session, provider_id)
-        if not match:
-            return 0
+def upsert_espn_match_appearances(
+    session: Session,
+    provider_id: str,
+    player_lines: list[EspnPlayerLine],
+    *,
+    lineup_only: bool = False,
+) -> int:
+    """    Persist actual 2026 box-score rows so player profiles include this year.
+    This function is intentionally idempotent: syncing the same ESPN match twice
+    updates the existing player/match row rather than inserting another one.
+    """
+    match = _match_entity(session, provider_id)
+    if not match:
+        return 0
 
     teams_by_provider = {
         match.home_team.provider_id: match.home_team,
