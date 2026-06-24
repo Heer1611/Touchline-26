@@ -131,8 +131,6 @@ export function PlayerExplorer({ onHistoryImported }: { onHistoryImported: () =>
         </div>
       </div>
 
-      <div className="player-source-note"><strong>How to read this:</strong> a named 2026 goal, assist, or card confirms that the player <em>played in that game</em>. It counts toward <strong>Games played</strong>. Minutes, shots, xG, passing, and ratings remain pending until ESPN publishes a full player box score.</div>
-
       <div className="player-controls">
         <label>Find a player<input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") applySearch(); }} placeholder="Search any player" /></label>
         <label>Team roster<select value={team} onChange={(event) => selectTeam(event.target.value)}><option value="">All teams</option>{teams.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}</select></label>
