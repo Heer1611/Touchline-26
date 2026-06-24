@@ -1,42 +1,44 @@
-# Touchline26
+# Touchline 26
 
-**Built for fans who want more than just the result.**
+[Live Site](https://touchline-26-nz6e-k6o6dzssv-heer1611s-projects.vercel.app)
 
-Touchline26 is a full-stack World Cup match tracker built around live match coverage, player files, verified match events, historical tournament data, and match-level analysis.
+Touchline 26 is a World Cup tracker I built to practice full-stack development with live sports data.
 
-The project combines a modern Next.js frontend, a FastAPI backend, PostgreSQL, Docker, WebSockets, ESPN public match data, and StatsBomb Open Data.
+The app shows current fixtures, match events, player profiles, historical World Cup information, and basic match predictions. I built the frontend with Next.js and TypeScript, and the backend with FastAPI, PostgreSQL, Docker, and WebSockets.
 
-## Features
+For current tournament coverage, the project uses ESPN public match data. For selected historical World Cup matches, it uses StatsBomb Open Data.
+
+## What It Includes
 
 ### Match Desk
 
-* Live, completed, and upcoming World Cup fixtures
-* Match scores, status, kickoff times, and tournament stages
-* Live event feed for goals, assists, cards, substitutions, penalties, reviews, and match updates
-* Team match statistics when available
-* Automatic refreshes for active matches
+* Live, completed, and upcoming World Cup matches
+* Scores, kickoff times, match status, and tournament stages
+* Live updates for goals, cards, substitutions, penalties, reviews, and other match events
+* Team match statistics when they are available
+* Automatic refreshes during active matches
 
 ### Player Files
 
 * Searchable player profiles
-* Player goals, assists, cards, and verified appearances
+* Goals, assists, cards, and confirmed appearances
 * National team squad profiles
-* Event-based player ratings
-* Clear separation between verified player events and unavailable full box-score data
+* Event Pulse scores based on confirmed match events
+* Clear labels when full player statistics have not been published yet
 
 ### Match Center
 
-* Individual match pages
-* Live score and match event updates
+* Individual pages for each match
+* Live score and event updates
 * Player-linked goals, assists, and cards
 * Team statistics when available
 * Match predictions and historical context
 
-### Historical Archive
+### Historical Data
 
-* World Cup history from the 2018 and 2022 tournaments
-* Historical player events, appearances, goals, assists, and match analysis
-* StatsBomb Open Data integration for detailed historical match data
+* Selected World Cup data from 2018 and 2022
+* Historical player appearances, goals, assists, and match events
+* StatsBomb Open Data support for historical match analysis
 
 ## Tech Stack
 
@@ -45,27 +47,20 @@ The project combines a modern Next.js frontend, a FastAPI backend, PostgreSQL, D
 | Frontend           | Next.js, React, TypeScript        |
 | Backend            | FastAPI, Python                   |
 | Database           | PostgreSQL                        |
-| Real-Time Updates  | WebSockets                        |
-| Local Development  | Docker and Docker Compose         |
+| Live Updates       | WebSockets                        |
+| Local Setup        | Docker and Docker Compose         |
 | Current Match Data | ESPN public score and event feeds |
 | Historical Data    | StatsBomb Open Data               |
 
-## Data Approach
+## Data Notes
 
-Touchline26 is designed to avoid presenting incomplete data as complete.
+Sports data is not always complete during or right after a match.
 
-The project separates information into three categories:
+Touchline 26 shows confirmed match events when they are available. Details such as minutes played, shots, xG, passing data, and player ratings are only shown when the provider includes them.
 
-1. **Verified match events**
-   Goals, named assists, cards, substitutions, and other published match events.
+When a stat is not available, the app shows `Pending` or `—` instead of guessing.
 
-2. **Published player statistics**
-   Minutes, shots, passing, defensive data, and other player statistics only when the source provides them.
-
-3. **Event Pulse ratings**
-   A project-created rating based on verified goals, assists, and cards. This is not an official FIFA, Opta, ESPN, SofaScore, or broadcast rating.
-
-When information is unavailable, the site shows `Pending` or `—` instead of estimating or inventing a statistic.
+Event Pulse is a score created for this project using confirmed goals, assists, and cards. It is not an official rating from FIFA, ESPN, Opta, SofaScore, or a broadcaster.
 
 ## Run Locally
 
@@ -74,34 +69,32 @@ When information is unavailable, the site shows `Pending` or `—` instead of es
 * Docker Desktop
 * Git
 
-### Start the project
-
-Clone the repository:
+### Clone the project
 
 ```bash
 git clone https://github.com/Heer1611/Touchline-26.git
 cd Touchline-26
 ```
 
-Create your local environment file:
+### Create the local environment file
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Start the frontend, backend, and database:
+### Start the app
 
 ```powershell
 docker compose up --build
 ```
 
-Open the site in your browser:
+Then open:
 
 ```text
 http://touchline26.localhost:3026
 ```
 
-To stop the project:
+### Stop the app
 
 ```powershell
 docker compose down
@@ -110,17 +103,19 @@ docker compose down
 ## Project Structure
 
 ```text
-touchline26/
+Touchline-26/
 ├── backend/
 │   ├── app/
 │   ├── scripts/
+│   ├── tests/
 │   ├── requirements.txt
 │   └── Dockerfile
 │
 ├── frontend/
 │   ├── app/
 │   ├── components/
-│   ├── public/
+│   ├── lib/
+│   ├── types/
 │   ├── package.json
 │   └── Dockerfile
 │
@@ -131,35 +126,33 @@ touchline26/
 └── README.md
 ```
 
-## Important Notes
+## Notes
 
-* Current tournament scores and events depend on publicly available provider data.
-* Full player box-score statistics are not always available for every match.
-* Missing minutes, shots, passing statistics, xG, and ratings are intentionally not guessed.
-* ESPN public endpoints may change and are used here for learning and portfolio purposes.
-* StatsBomb Open Data is used for available historical tournament analysis.
+* Current tournament data depends on public provider feeds.
+* ESPN may not publish complete player box scores for every match.
+* StatsBomb Open Data is used for available historical tournament data.
+* The project is for learning and portfolio purposes.
 
 ## Future Improvements
 
-* Permanent public deployment
 * User accounts and saved favorite teams
-* Tournament standings and bracket visualization
+* Tournament standings and bracket views
 * Team comparison pages
-* Expanded prediction models
-* Match notifications for goals, cards, and kickoff times
-* Additional data-provider support for more complete player statistics
+* More prediction features
+* Match notifications for kickoff times, goals, and cards
+* More data sources for player statistics
 
 ## About This Project
 
-I built Touchline26 to combine my interests in full-stack development, Python, data engineering, sports analytics, and real-time web applications.
+I built Touchline 26 because I wanted a project where I could combine sports, Python, data analytics, APIs, and full-stack development.
 
-This project demonstrates:
+While working on it, I practiced:
 
 * API integration
-* Dockerized development
+* Data cleaning and normalization
 * FastAPI backend development
 * Next.js and React frontend development
 * PostgreSQL database design
-* WebSocket-based live updates
-* Data normalization and event processing
-* Responsible handling of incomplete sports data
+* Dockerized development
+* WebSocket updates
+* Working with incomplete real-world data
