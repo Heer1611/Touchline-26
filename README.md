@@ -1,6 +1,6 @@
 # Touchline 26
 
-[Live Site](https://touchline-26-nz6e-k6o6dzssv-heer1611s-projects.vercel.app)
+[Live Site](touchline-26-nz6e.vercel.app)
 
 Touchline 26 is a World Cup tracker I built to practice full-stack development with live sports data.
 
